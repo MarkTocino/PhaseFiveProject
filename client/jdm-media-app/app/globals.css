@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -30,3 +31,25 @@ body {
   background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1))
   }
 
+.backgroundContainer {
+    width: 100vw;
+    height: calc(100vh - 70px);
+    object-fit: cover;
+    background-repeat:repeat-x;
+    background-position: center center;
+    background-attachment: fixed;
+    flex: content;
+}
+.box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  position: absolute;
+  bottom: 40%;
+  left: 45%
+}
+.turboLoading {
+  position: absolute;
+  top: 100%;
+}

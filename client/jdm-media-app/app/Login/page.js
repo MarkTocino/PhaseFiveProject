@@ -23,7 +23,7 @@ const router = useRouter()
       })
       .then(response => {
         if (response.ok) {
-          router.push('/Home')
+          router.push('/Dashboard')
         }
       })
     }
