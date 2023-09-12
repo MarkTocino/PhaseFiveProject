@@ -40,16 +40,4 @@ body {
     background-attachment: fixed;
     flex: content;
 }
-.box {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: auto;
-  position: absolute;
-  bottom: 40%;
-  left: 45%
-}
-.turboLoading {
-  position: absolute;
-  top: 100%;
-}
+
