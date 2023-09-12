@@ -7,7 +7,7 @@ const anton = Anton({subsets:['latin'], weight:['400']})
 export const home = () => {
 
   return (
-    <>
+  <>
     <div className="flexbox">
       <section className={anton.className}>
         <div
@@ -20,7 +20,6 @@ export const home = () => {
             <Link href="Login">
               <Button className="flex h-12 px-6 text-2xl relative bottom-80">LOGIN</Button>
             </Link>
-
           </div>
           <div className="flex justify-center">
               <Button className="h-20 px-10 text-3xl bg-red-600 opacity-100 flex text-center relative bottom-80" isLoading>TURBO LOADING...SIGN IN IS NEEDED</Button>
@@ -28,7 +27,7 @@ export const home = () => {
           </div>
       </section>
     </div>
-    </>
+  </>
   )
 }
 export default home

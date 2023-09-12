@@ -10,7 +10,7 @@ const [password, setPassword] = useState("");
 const router = useRouter()
   const handleLogin = (e) => {
     e.preventDefault();
-      fetch("http://127.0.0.1:5555/login", {
+      fetch("http://127.0.0.1:5555/Login", {
         method: "POST",
         credentials: "include",
         headers: {

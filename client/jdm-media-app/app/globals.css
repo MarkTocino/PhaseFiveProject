@@ -1,8 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -16,28 +14,26 @@
     --background-end-rgb: 0, 0, 0;
   }
 }
-
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-}
 .gradient-custom {
   /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1))
-  }
-
-.backgroundContainer {
-    width: 100vw;
-    height: calc(100vh - 70px);
-    object-fit: cover;
-    background-repeat:repeat-x;
-    background-position: center center;
-    background-attachment: fixed;
-    flex: content;
+}
+.Navbar {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  justify-content: center;
 }
 
+.headerNav {
+  background-color: rgb(0, 0, 0);
+  padding: 30px 10%;
+  color: rgb(255, 255, 255);
+}
+.UserCover {
+  background-image: url('../Images/UserSettings_bg.jpg');
+  aspect-ratio: 16/7;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+}

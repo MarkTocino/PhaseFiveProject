@@ -54,14 +54,14 @@ class Login(Resource):
         if bcrypt.checkpw(password.encode('utf-8'), user.password):
             login_user(user, remember=True)
             return "You are Logged In!"
-api.add_resource(Login, '/login')
+api.add_resource(Login, '/Login')
 
 class Logout(Resource):
    @login_required
    def post(self):
       logout_user()
       return 'You are logged out'
-api.add_resource(Logout, '/logout')
+api.add_resource(Logout, '/Logout')
 
 class SignUp(Resource):
    def post(self):
@@ -74,5 +74,57 @@ class SignUp(Resource):
     db.session.commit()
     return make_response("User has been created", 200)
 api.add_resource(SignUp, '/signup')
+
+# USER SETTINGS CHANGE SUCH AS USERNAME FIRST NAME OR LAST NAME
+class ChangeUsername(Resource):
+    def patch(self):
+        try:
+            user = current_user
+            data=request.get_json()
+            new_username = data['username']
+            setattr(user, 'username', new_username)
+            db.session.commit()
+            return make_response("Username Has Been Changed", 200)
+        except:
+            return make_response("Username Failed To Change", 400)
+api.add_resource(ChangeUsername, '/ChangeUsername')
+class ChangeFirstName(Resource):
+    def patch(self):
+        try:
+            user = current_user
+            data = request.get_json()
+            new_first_name = data['first_name']
+            setattr(user, 'first_name', new_first_name)
+            db.session.commit()
+            return make_response("First_name Has Been Changed", 200)
+        except:
+            return make_response("First_name Failed To Change", 400)
+api.add_resource(ChangeFirstName, '/ChangeFirstName')
+class ChangeLastName(Resource):
+    def patch(self):
+        try:
+            user = current_user
+            data = request.get_json()
+            new_last_name = data['last_name']
+            setattr(user, 'last_name', new_last_name)
+            db.session.commit()
+            return make_response("Last_Name Has Been Changed", 200)
+        except:
+            return make_response("Last_Name Failed To Change", 400)
+api.add_resource(ChangeLastName, '/ChangeLastName')
+class ChangePassword(Resource):
+    def patch(self):
+        try:
+            user = current_user
+            data = request.get_json()
+            password = data['password']
+            hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+            setattr(user, 'password', hashed)
+            db.session.commit()
+            return make_response("Password Has Been Changed", 200)
+        except:
+            return make_response("Password Failed To Change", 400)
+api.add_resource(ChangePassword, '/ChangePassword')
+
 if __name__ == "__main__":
     app.run(port=5555, debug = True )
