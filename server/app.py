@@ -1,11 +1,12 @@
-from models import db, User
+from models import db, User, Post , PostComment, PostLike
 from flask_restful import Api, Resource
-from flask import Flask, make_response, request
-import bcrypt
+from flask import Flask, make_response, request, Response, jsonify
 from flask_migrate import Migrate
+import bcrypt
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_cors import CORS as FlaskCors
 import os
+from werkzeug.utils import secure_filename
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 DATABASE = os.environ.get(
@@ -38,7 +39,7 @@ class CurrentUser(Resource):
     def get(self):
         user = current_user
         if user:
-            return make_response(user.to_dict(), 200)
+            return make_response(user.to_dict(rules=('-posts.photo',)), 200)
         else:
             return make_response({"message": "User not found"}, 404)
 api.add_resource(CurrentUser,'/currentUser')
@@ -126,5 +127,50 @@ class ChangePassword(Resource):
             return make_response("Password Failed To Change", 400)
 api.add_resource(ChangePassword, '/ChangePassword')
 
+# Upload Image :)
+class UploadImage(Resource):
+    # @login_required
+    def post(self):
+        # When request.files the key is the ["photo"]
+        photo = request.files['photo']
+        # data = request.get_json()
+        if not photo:
+            return make_response('No pic uploaded', 400)
+        
+        filename = secure_filename(photo.filename)
+        mimetype = photo.mimetype
+
+        post = Post(photo=photo.read(), mimetype=mimetype, name=filename, user_id=current_user.id)
+        db.session.add(post)
+        db.session.commit()
+        return 'Image was uploaded',200
+api.add_resource(UploadImage, '/UploadImage')
+import base64
+# base64 is a group of binary to text encoding shcemes. decode it into a ('utf-8')
+class UserProfileImages(Resource):
+    @login_required
+    def get(self):
+        images = Post.query.filter(Post.user_id == current_user.id).all()
+        # images.query.all()
+        print(current_user.id)
+        if not images:
+            return 'No Images'
+        # one_image = [base64.b64encode(images.photo).decode('utf-8')]
+        images_list = [base64.b64encode(image.photo).decode('utf-8') for image in images]
+        return {
+            'images':images_list}
+api.add_resource(UserProfileImages, '/Images')
+
+class UserDashboard(Resource):
+    @login_required
+    def get(self):
+        all_users = User.query.all()
+        users = []
+        for user in all_users:
+            for post in user.posts:
+                post.photo = base64.b64encode(post.photo).decode('utf-8')   
+            users.append(user.to_dict())
+        return users
+api.add_resource(UserDashboard, '/UserDashboard')
 if __name__ == "__main__":
     app.run(port=5555, debug = True )

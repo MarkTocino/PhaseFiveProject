@@ -87,8 +87,7 @@ const handlelogout = () => {
     credentials:"include",
   })
 }
-
-  return (
+return (
 <>
 <div className={staatliches.className}>
   <div className="flex justify-between align-middle headerNav">
@@ -114,7 +113,7 @@ const handlelogout = () => {
           <div className='p-2'>Current UserName: {user?.username}</div>
           <label className='p-2'>New Username:</label>
           <br></br>
-          <input onChange={(e) => setNew_username(e.target.value)} className='bg-black border-white p-2' type='text' name='username' placeholder='Input New Username'></input>
+          <input onChange={(e) => setNew_username(e.target.value)} className='bg-black border-white p-2' id='id' type='text' name='username' placeholder='Input New Username'></input>
         <div className={staatliches.className}>
           <button  className='animate-pulse p-2' position={'Bottom Center'}>Submit</button>
         </div>
@@ -126,7 +125,7 @@ const handlelogout = () => {
         <form onSubmit={handlePassword} className={staatliches.className}>
           <label className='p-2'>New Password:</label>
           <br></br>
-          <input onChange={(e) => setNew_Password(e.target.value)} className='bg-black border-white p-2' type='text' name='Password' placeholder='Input New Password'></input>
+          <input id='id' onChange={(e) => setNew_Password(e.target.value)} className='bg-black border-white p-2' type='text' name='Password' placeholder='Input New Password'></input>
         <div className={staatliches.className}>
           <button  className='animate-pulse p-2' position={'Bottom Center'}>Submit</button>
         </div>
@@ -139,7 +138,7 @@ const handlelogout = () => {
           <div className='p-2'>Current FirstName: {user ? user?.first_name : 'None'}</div>
           <label className='p-2'>New FirstName:</label>
           <br></br>
-          <input onChange={(e) => setNew_FirstName(e.target.value)} className='bg-black border-white p-2' type='text' name='FirstName' placeholder='Input New FirstName'></input>
+          <input id='id' onChange={(e) => setNew_FirstName(e.target.value)} className='bg-black border-white p-2' type='text' name='FirstName' placeholder='Input New FirstName'></input>
         <div className={staatliches.className}>
           <button className='animate-pulse p-2' position={'Bottom Center'}>Submit</button>
         </div>
@@ -152,7 +151,7 @@ const handlelogout = () => {
           <div className='p-2'>Current Lastname: {user ? user.last_name : 'None'}</div>
           <label className='p-2'>NEW LAST NAME:</label>
           <br></br>
-          <input onChange={(e) => setNew_LastName(e.target.value)} className='bg-black border-white p-2' type='text' name='' placeholder='Input New LastName'></input>
+          <input id='id' onChange={(e) => setNew_LastName(e.target.value)} className='bg-black border-white p-2' type='text' name='' placeholder='Input New LastName'></input>
         <div className={staatliches.className}>
           <button className='animate-pulse p-2' position={'Bottom Center'}>Submit</button>
         </div>

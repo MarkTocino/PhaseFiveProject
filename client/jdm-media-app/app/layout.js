@@ -9,7 +9,7 @@ export default function RootLayout({children}){
   return (
   <UserProvider>
     <html lang="en" className='light'>
-      <body>
+      <body suppressHydrationWarning={true}>
         <Providers>
           {children}
         </Providers>

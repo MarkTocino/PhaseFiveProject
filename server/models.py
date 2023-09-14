@@ -4,7 +4,7 @@ from flask_migrate import Migrate
 from flask_login import UserMixin
 from sqlalchemy_serializer import SerializerMixin
 from datetime import datetime
-
+import base64
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
 
@@ -26,12 +26,13 @@ class User(db.Model, UserMixin, SerializerMixin):
     post_comments = db.relationship('PostComment', cascade = 'all ,delete', backref = 'user')
     serialize_rules = ('-posts.user','-post_likes.user','-post_comments.user',)
 
-class Post(db.Model, SerializerMixin):
+class Post(db.Model,UserMixin, SerializerMixin):
     __tablename__='posts'
     id = db.Column(db.Integer, primary_key=True)
-    photo = db.BLOB
-    body = db.Column(db.String)
+    photo = db.Column(db.Text, nullable = False)
+    name = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.now)
+    mimetype=db.Column(db.Text, nullable = False)
     # relationship
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     post_likes = db.relationship('PostLike', cascade = 'all, delete', backref = 'post')

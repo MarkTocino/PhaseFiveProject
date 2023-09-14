@@ -1,5 +1,5 @@
 'use client'
-import React, { useContext } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { UserContext } from '../../Context/UserProvider'
 import { Staatliches } from 'next/font/google'
 const staatliches = Staatliches({
@@ -15,6 +15,20 @@ const handlelogout = () => {
     credentials:"include",
   })
 }
+
+
+const [image, setImage] = useState([]);
+useEffect(() => {
+  fetch("http://127.0.0.1:5555/UserDashboard",{
+    credentials: "include"
+  })
+  .then((response => response.json()))
+  .then((response) => {
+    setImage(response)
+  })
+  .catch("This was an error fetch")
+},[]
+)
   return (
 <>
 <div className={staatliches.className}>
@@ -30,6 +44,24 @@ const handlelogout = () => {
       <button onClick={handlelogout} className='flex text-2xl'><a href='/'>LOGOUT</a></button>
   </header>
 </div>
+<div>
+        {image ?
+            image.map((images) => (
+            <>
+            <div key ={images.id}></div>
+              {images.posts.map((all_images) => (
+                console.log(all_images.created_at),
+                <>
+                  {images.username}
+                <img key={all_images.id} src={`data:image/jpeg;base64, ${all_images.photo}` || `data:image/png;base64. ${images.photo}`} alt='Images From Database'></img>
+                </>
+              ))}
+            </>
+            ))
+          
+        : ( <h1>IMAGE LOADING</h1>
+        )}
+      </div>
 </>
   )
 }
