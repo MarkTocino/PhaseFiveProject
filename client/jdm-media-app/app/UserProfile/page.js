@@ -8,7 +8,6 @@ const staatliches = Staatliches({
     display: 'swap'
   })
 const UserProfile = () => {
-  const { user } = useContext(UserContext)
 const handlelogout = () => {
   fetch("http://127.0.0.1:5555/Logout",{
     method:"POST",
@@ -16,18 +15,31 @@ const handlelogout = () => {
   })
   
 }
-const [image, setImage] = useState([]);
-
+const [images, setImage] = useState([]);
 useEffect(() => {
-  fetch("http://127.0.0.1:5555/Images",{
+  fetch("http://127.0.0.1:5555/UserProfile",{
     credentials: "include"
   })
   .then((response => response.json()))
   .then((response) => {
-    setImage(response.images)
+    const sortedMap = response
+    .flatMap(userPhoto => userPhoto.posts.map(image => ({...image, username:userPhoto.username,
+    post_likes:userPhoto.post_likes
+    })))
+    .sort((a,b) => b.id - a.id);
+    setImage(sortedMap);
   })
   .catch("This was an error fetch")
-},[])
+},[]
+)
+console.log(images)
+const handleDelete = (e, post_id) => {
+  fetch(`http://127.0.0.1:5555/DeletePost/${post_id}`,{
+    method: "DELETE",
+    credentials:"include",
+  })
+  .catch("FAILED TO POST")
+}
 return (
 <>
 <div className={staatliches.className}>
@@ -44,10 +56,13 @@ return (
   </header>
 </div>
 <div>
-        <h1>{user ? user.username : "NO USER LOGGED IN"}</h1>
-        {image ?
-            image.map((images) => (
-              <img src={`data:image/jpeg;base64, ${images}` || `data:image/png;base64. ${images}`} alt='Images From Database'></img>
+        <h1>Your Uploaded Posts! You Can Edit Your Posts Here!</h1>
+        {images ?
+            images.map((image) => (
+              <>
+              <img src={`data:image/jpeg;base64, ${image.photo}` || `data:image/png;base64. ${images}`} alt='Images From Database'></img>
+              <button onClick={(e) => handleDelete(e,image.id)}>DELETE POST</button>
+              </>
             ))
         : ( <h1>IMAGE LOADING</h1>
         )}

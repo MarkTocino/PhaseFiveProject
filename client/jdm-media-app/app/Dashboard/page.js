@@ -30,12 +30,13 @@ useEffect(() => {
   .catch("This was an error fetch")
 },[]
 )
+const [title, setTitle] = useState('')
 const [file ,setFile] = useState(null)
-const formData = new FormData();
-formData.append("photo", file);
-
 const handlePost = (e) => {
-  // e.preventDefault();
+  // NOTE TO SELF: FORMDATA() is used when Content or encType is multipart/form-data:
+  const formData = new FormData();
+  formData.append("photo", file);
+  formData.append("title", title)
   fetch("http://127.0.0.1:5555/UploadImage",{
     method: "POST",
     credentials:"include",
@@ -46,14 +47,10 @@ const handlePost = (e) => {
   })
   .catch("FAILED TO POST")
 }
-const [liked, setLiked] = useState(false)
 const handleLike = (e, post_id) => {
   // e.preventDefault();
-  setLiked(true)
   setImage((pastState) => pastState.map((image) =>
-    image.id === post_id
-      ? { ...image, likes: image.likes + 1 }
-      : image
+    image.id === post_id ? { ...image, likes: image.likes + 1 } : image
   )
 );
   fetch(`http://127.0.0.1:5555/Like/${post_id}`,{
@@ -69,13 +66,6 @@ const handleLike = (e, post_id) => {
   .catch("FAILED TO POST")
 }
 console.log(images)
-const handleDelete = (e, post_id) => {
-  fetch(`http://127.0.0.1:5555/DeletePost/${post_id}`,{
-    method: "DELETE",
-    credentials:"include",
-  })
-  .catch("FAILED TO POST")
-}
   return (
 <>
 <div className={staatliches.className}>
@@ -92,7 +82,7 @@ const handleDelete = (e, post_id) => {
   </header>
 </div>
 <form onSubmit={handlePost}>
-    <label></label>
+  <label onChange={(e) => setTitle(e.target.value)}>TITLE: <input type='text'></input></label>
     <input id="photo" onChange={(e) => setFile(e.target.files[0])} type='file'></input>
     <button type='submit'>Submit</button>
 </form>
@@ -100,6 +90,7 @@ const handleDelete = (e, post_id) => {
     {images ?  (
       images.map((image) => (
         <div key={image.id}>
+          <h1>Title : {image.title}</h1>
           <h2>From : {image.username}</h2>
           <img className='flex max-w-lg'
             src={`data:image/jpeg;base64, ${image.photo}` || `data:image/png;base64. ${image.photo}`}
@@ -108,8 +99,6 @@ const handleDelete = (e, post_id) => {
           <h2>Likes : {image.likes}
           </h2>
           <button onClick={(e) => handleLike(e, image.id)}>♥</button>
-          <br></br>
-          <button onClick={(e) => handleDelete(e,image.id)}>DELETE POST</button>
         </div>
       ))
     ) : (

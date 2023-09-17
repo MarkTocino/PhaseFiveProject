@@ -35,6 +35,7 @@ class User(db.Model, UserMixin, SerializerMixin):
 class Post(db.Model,UserMixin, SerializerMixin):
     __tablename__='posts'
     id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.Text, nullable=True)
     photo = db.Column(db.Text, nullable = True)
     name = db.Column(db.Text, nullable = True)
     created_at = db.Column(db.DateTime, default=datetime.now)

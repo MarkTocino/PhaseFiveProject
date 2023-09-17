@@ -50,14 +50,14 @@ class Login(Resource):
         password = data['password']
         if bcrypt.checkpw(password.encode('utf-8'), user.password):
             login_user(user, remember=True)
-            return "You are Logged In!"
+            return make_response("You Are Logged In!"), 200
 api.add_resource(Login, '/Login')
 
 class Logout(Resource):
    @login_required
    def post(self):
       logout_user()
-      return 'You are logged out'
+      return make_response("You Are Logged Out!")
 api.add_resource(Logout, '/Logout')
 
 class SignUp(Resource):
@@ -66,10 +66,15 @@ class SignUp(Resource):
     username = data['username']
     password = data['password']
     hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-    user = User(username=username, password = hashed)
-    db.session.add(user)
-    db.session.commit()
-    return make_response("User has been created", 200)
+    if username in User.username:
+        return make_response("Username has already been used"), 400
+    try:
+        user = User(username=username, password = hashed)
+        db.session.add(user)
+        db.session.commit()
+        return make_response("User has been created", 200)
+    except:
+        return make_response("Failed to Create User"), 404
 api.add_resource(SignUp, '/signup')
 
 # USER SETTINGS CHANGE SUCH AS USERNAME FIRST NAME OR LAST NAME
@@ -133,10 +138,10 @@ class UploadImage(Resource):
 
             if not photo:
                 return make_response('No pic uploaded', 400)
-
+            title = request.form.get('title')
             filename = secure_filename(photo.name)
             mimetype = photo.mimetype
-            post = Post(photo=photo.read(), mimetype=mimetype, name=filename, user_id=current_user.id)
+            post = Post(title=title ,photo=photo.read(), mimetype=mimetype, name=filename, user_id=current_user.id)
             db.session.add(post)
             db.session.commit()
             return 'Image was uploaded', 200
@@ -148,15 +153,26 @@ import base64
 class UserProfileImages(Resource):
     @login_required
     def get(self):
-        images = Post.query.filter(Post.user_id == current_user.id).all()
-        # images.query.all()
-        print(current_user.id)
-        if not images:
-            return 'No Images'
-        images_list = [base64.b64encode(image.photo).decode('utf-8') for image in images]
-        return {
-            'images':images_list}
-api.add_resource(UserProfileImages, '/Images')
+        posts = []
+        for post in current_user.posts:
+            post.photo = base64.b64encode(post.photo).decode('utf-8')   
+        posts.append(current_user.to_dict())
+        return posts
+api.add_resource(UserProfileImages, '/UserProfile')
+# USER PROFILE IMAGE PATCH
+class ImagePatch(Resource):
+    @login_required
+    def patch(self, post_id):
+        post = Post.query.get(post_id)
+        data = request.get_json()
+        new_title = data['title']
+        try:
+            setattr(post, 'title', new_title)
+            db.session.commit()
+            return make_response("PATCH SUCCESFULL", 200)
+        except:
+            return make_response("FAILED TO PATCH"), 400
+api.add_resource(ImagePatch, '/ImagePatch/<int:post_id>')
 # USER DASHBOARD IMPORTANT
 class UserDashboard(Resource):
     @login_required
