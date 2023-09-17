@@ -1,6 +1,5 @@
 'use client'
 import React, { useContext, useState, useEffect } from 'react'
-import { UserContext } from '../../Context/UserProvider'
 import { Staatliches } from 'next/font/google'
 const staatliches = Staatliches({
   weight:'400',
@@ -8,7 +7,6 @@ const staatliches = Staatliches({
   display: 'swap'
 })
 export const Dashboard = () => {
-const { user } = useContext(UserContext)
 const handlelogout = () => {
   fetch("http://127.0.0.1:5555/Logout",{
     method:"POST",
@@ -42,13 +40,42 @@ const handlePost = (e) => {
     method: "POST",
     credentials:"include",
   headers: {
-    "encType": "multipart/form-data"
+    "encType": "multipart/form-data",
   },
   body: formData
   })
   .catch("FAILED TO POST")
 }
+const [liked, setLiked] = useState(false)
+const handleLike = (e, post_id) => {
+  // e.preventDefault();
+  setLiked(true)
+  setImage((pastState) => pastState.map((image) =>
+    image.id === post_id
+      ? { ...image, likes: image.likes + 1 }
+      : image
+  )
+);
+  fetch(`http://127.0.0.1:5555/Like/${post_id}`,{
+    method: "PATCH",
+    credentials:"include",
+  headers: {
+    "Content-Type":"application/json"
+  },
+  body: JSON.stringify({
+    likes:1
+  }),
+  })
+  .catch("FAILED TO POST")
+}
 console.log(images)
+const handleDelete = (e, post_id) => {
+  fetch(`http://127.0.0.1:5555/DeletePost/${post_id}`,{
+    method: "DELETE",
+    credentials:"include",
+  })
+  .catch("FAILED TO POST")
+}
   return (
 <>
 <div className={staatliches.className}>
@@ -73,11 +100,16 @@ console.log(images)
     {images ?  (
       images.map((image) => (
         <div key={image.id}>
-          <h2>{image.username}</h2>
+          <h2>From : {image.username}</h2>
           <img className='flex max-w-lg'
             src={`data:image/jpeg;base64, ${image.photo}` || `data:image/png;base64. ${image.photo}`}
             alt='Images From Database'
           ></img>
+          <h2>Likes : {image.likes}
+          </h2>
+          <button onClick={(e) => handleLike(e, image.id)}>♥</button>
+          <br></br>
+          <button onClick={(e) => handleDelete(e,image.id)}>DELETE POST</button>
         </div>
       ))
     ) : (

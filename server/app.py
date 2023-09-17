@@ -1,6 +1,6 @@
-from models import db, User, Post , PostComment, PostLike
+from models import db, User, Post , PostComment, user_likes
 from flask_restful import Api, Resource
-from flask import Flask, make_response, request, Response, jsonify
+from flask import Flask, make_response, request
 from flask_migrate import Migrate
 import bcrypt
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
@@ -32,8 +32,6 @@ login_manager.init_app(app)
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
-
-
 class CurrentUser(Resource):
     @login_required
     def get(self):
@@ -43,8 +41,6 @@ class CurrentUser(Resource):
         else:
             return make_response({"message": "User not found"}, 404)
 api.add_resource(CurrentUser,'/currentUser')
-
-
 class Login(Resource):
     def post(self):
         data = request.get_json()
@@ -129,21 +125,23 @@ api.add_resource(ChangePassword, '/ChangePassword')
 
 # Upload Image :)
 class UploadImage(Resource):
-    # @login_required
+    @login_required
     def post(self):
-        # When request.files the key is the ["photo"]
-        photo = request.files['photo']
-        # data = request.get_json()
-        if not photo:
-            return make_response('No pic uploaded', 400)
-        
-        filename = secure_filename(photo.filename)
-        mimetype = photo.mimetype
+        try:
+            # When request.files the key is the ["photo"]
+            photo = request.files['photo']
 
-        post = Post(photo=photo.read(), mimetype=mimetype, name=filename, user_id=current_user.id)
-        db.session.add(post)
-        db.session.commit()
-        return 'Image was uploaded',200
+            if not photo:
+                return make_response('No pic uploaded', 400)
+
+            filename = secure_filename(photo.name)
+            mimetype = photo.mimetype
+            post = Post(photo=photo.read(), mimetype=mimetype, name=filename, user_id=current_user.id)
+            db.session.add(post)
+            db.session.commit()
+            return 'Image was uploaded', 200
+        except Exception as e:
+            return make_response(f'Image upload failed: {str(e)}', 400)
 api.add_resource(UploadImage, '/UploadImage')
 import base64
 # base64 is a group of binary to text encoding shcemes. decode it into a ('utf-8')
@@ -155,12 +153,11 @@ class UserProfileImages(Resource):
         print(current_user.id)
         if not images:
             return 'No Images'
-        # one_image = [base64.b64encode(images.photo).decode('utf-8')]
         images_list = [base64.b64encode(image.photo).decode('utf-8') for image in images]
         return {
             'images':images_list}
 api.add_resource(UserProfileImages, '/Images')
-
+# USER DASHBOARD IMPORTANT
 class UserDashboard(Resource):
     @login_required
     def get(self):
@@ -172,5 +169,52 @@ class UserDashboard(Resource):
             users.append(user.to_dict())
         return users
 api.add_resource(UserDashboard, '/UserDashboard')
+# DELETE POST
+class DeletePost(Resource):
+    def delete(self, post_id):
+        post = Post.query.get(post_id)
+        if current_user.id == post.user_id:
+            db.session.delete(post)
+            db.session.commit()
+            return make_response("Delete Succesful")
+        else:
+            return make_response("You don't own this post")
+api.add_resource(DeletePost, '/DeletePost/<int:post_id>')
+# LIKES
+class Like(Resource):
+    def patch(self, post_id):
+        data = request.get_json()
+        postlike = data['likes']
+        post = Post.query.get(post_id)
+        if post:
+            if current_user in post.liked_by:
+                post.likes += postlike
+                db.session.commit()
+                return make_response("Like has been added")
+            if current_user not in post.liked_by:
+                post.liked_by.append(current_user)
+                post.likes += postlike
+                db.session.commit()
+                return make_response("Liked Post", 200)
+            else:
+                return make_response("User has already liked this post")
+        if not post:
+            return make_response("Post does not exists", 404)
+    def delete(self, post_id):
+        data = request.get_json()
+        postlike = data['likes']
+        post = Post.query.get(post_id)
+        if post:
+            if current_user in post.liked_by:
+                post.liked_by.remove(current_user)
+                post.likes -= postlike
+                db.session.commit()
+                return make_response("Unliked Post", 200)
+            else:
+                return make_response("User has never liked this post")
+        if not post:
+            return make_response("Post does not exists", 404)
+api.add_resource(Like, '/Like/<int:post_id>')
+
 if __name__ == "__main__":
     app.run(port=5555, debug = True )

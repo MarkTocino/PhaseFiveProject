@@ -11,6 +11,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+# Likes Many to Many Table
+user_likes = db.Table('user_likes',
+                 db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+                 db.Column('post_id', db.Integer, db.ForeignKey('posts.id'))
+)
 
 class User(db.Model, UserMixin, SerializerMixin):
     __tablename__= 'users'
@@ -22,30 +27,27 @@ class User(db.Model, UserMixin, SerializerMixin):
 
     # relationship
     posts = db.relationship('Post', cascade = 'all, delete', backref = 'user')
-    post_likes = db.relationship('PostLike', cascade = 'all, delete', backref = 'user')
     post_comments = db.relationship('PostComment', cascade = 'all ,delete', backref = 'user')
-    serialize_rules = ('-posts.user','-post_likes.user','-post_comments.user',)
+    liked_posts = db.relationship('Post', secondary=user_likes, back_populates='liked_by')
+    # rules
+    serialize_rules = ('-posts.user','-post_comments.user','-liked_posts',)
 
 class Post(db.Model,UserMixin, SerializerMixin):
     __tablename__='posts'
     id = db.Column(db.Integer, primary_key=True)
-    photo = db.Column(db.Text, nullable = False)
-    name = db.Column(db.Text)
+    photo = db.Column(db.Text, nullable = True)
+    name = db.Column(db.Text, nullable = True)
     created_at = db.Column(db.DateTime, default=datetime.now)
-    mimetype=db.Column(db.Text, nullable = False)
+    mimetype=db.Column(db.Text, nullable = True)
+    likes=db.Column(db.Integer, default=0)
     # relationship
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    post_likes = db.relationship('PostLike', cascade = 'all, delete', backref = 'post')
     post_comments = db.relationship('PostComment', cascade = 'all, delete', backref = 'post')
-    serialize_rules = ('-post_likes.post', '-post_comments.post',)
 
-class PostLike(db.Model, SerializerMixin):
-    __tablename__ = 'post_likes'
-    id = db.Column(db.Integer, primary_key=True)
-    post_likes = db.Column(db.Integer)
-    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    serialize_rules = ('-post.post_likes', '-user.post_likes',)
+    liked_by = db.relationship('User', secondary=user_likes, back_populates='liked_posts')
+    # rules
+    serialize_rules = ('-post_comments.post','-liked_by',)
+
 
 class PostComment(db.Model, SerializerMixin):
     __tablename__ = 'post_comments'
@@ -54,3 +56,6 @@ class PostComment(db.Model, SerializerMixin):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
     serialize_rules = ('-user.post_comments', '-post.post_comments',)
+
+# class Admins(db.Model, SerializerMixin):
+#     pass
