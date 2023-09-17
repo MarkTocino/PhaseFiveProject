@@ -15,20 +15,40 @@ const handlelogout = () => {
     credentials:"include",
   })
 }
-
-
-const [image, setImage] = useState([]);
+const [images, setImage] = useState([]);
 useEffect(() => {
   fetch("http://127.0.0.1:5555/UserDashboard",{
     credentials: "include"
   })
   .then((response => response.json()))
   .then((response) => {
-    setImage(response)
+    const sortedMap = response
+    .flatMap(userPhoto => userPhoto.posts.map(image => ({...image, username:userPhoto.username,
+    post_likes:userPhoto.post_likes
+    })))
+    .sort((a,b) => b.id - a.id);
+    setImage(sortedMap);
   })
   .catch("This was an error fetch")
 },[]
 )
+const [file ,setFile] = useState(null)
+const formData = new FormData();
+formData.append("photo", file);
+
+const handlePost = (e) => {
+  // e.preventDefault();
+  fetch("http://127.0.0.1:5555/UploadImage",{
+    method: "POST",
+    credentials:"include",
+  headers: {
+    "encType": "multipart/form-data"
+  },
+  body: formData
+  })
+  .catch("FAILED TO POST")
+}
+console.log(images)
   return (
 <>
 <div className={staatliches.className}>
@@ -44,24 +64,26 @@ useEffect(() => {
       <button onClick={handlelogout} className='flex text-2xl'><a href='/'>LOGOUT</a></button>
   </header>
 </div>
+<form onSubmit={handlePost}>
+    <label></label>
+    <input id="photo" onChange={(e) => setFile(e.target.files[0])} type='file'></input>
+    <button type='submit'>Submit</button>
+</form>
 <div>
-        {image ?
-            image.map((images) => (
-            <>
-            <div key ={images.id}></div>
-              {images.posts.map((all_images) => (
-                console.log(all_images.created_at),
-                <>
-                  {images.username}
-                <img key={all_images.id} src={`data:image/jpeg;base64, ${all_images.photo}` || `data:image/png;base64. ${images.photo}`} alt='Images From Database'></img>
-                </>
-              ))}
-            </>
-            ))
-          
-        : ( <h1>IMAGE LOADING</h1>
-        )}
-      </div>
+    {images ?  (
+      images.map((image) => (
+        <div key={image.id}>
+          <h2>{image.username}</h2>
+          <img className='flex max-w-lg'
+            src={`data:image/jpeg;base64, ${image.photo}` || `data:image/png;base64. ${image.photo}`}
+            alt='Images From Database'
+          ></img>
+        </div>
+      ))
+    ) : (
+      <h1>IMAGE LOADING</h1>
+    )}
+</div>
 </>
   )
 }
