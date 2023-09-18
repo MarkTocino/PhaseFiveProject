@@ -86,13 +86,13 @@ console.log(images)
     <input id="photo" onChange={(e) => setFile(e.target.files[0])} type='file'></input>
     <button type='submit'>Submit</button>
 </form>
-<div>
+<div className='Container'>
     {images ?  (
       images.map((image) => (
         <div key={image.id}>
           <h1>Title : {image.title}</h1>
           <h2>From : {image.username}</h2>
-          <img className='flex max-w-lg'
+          <img
             src={`data:image/jpeg;base64, ${image.photo}` || `data:image/png;base64. ${image.photo}`}
             alt='Images From Database'
           ></img>

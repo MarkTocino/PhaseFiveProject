@@ -37,3 +37,15 @@
   text-align: center;
   justify-content: center;
 }
+.Container {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+}
+.Container img {
+  width: 1350px;
+  height: auto;
+  display: flex;
+  justify-content: center;
+}

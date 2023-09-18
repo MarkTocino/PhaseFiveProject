@@ -50,7 +50,7 @@ class Login(Resource):
         password = data['password']
         if bcrypt.checkpw(password.encode('utf-8'), user.password):
             login_user(user, remember=True)
-            return make_response("You Are Logged In!"), 200
+            return "You Are Logged In!", 200
 api.add_resource(Login, '/Login')
 
 class Logout(Resource):
@@ -66,7 +66,8 @@ class SignUp(Resource):
     username = data['username']
     password = data['password']
     hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-    if username in User.username:
+    existing_user = User.query.filter_by(username=username).first()
+    if existing_user:
         return make_response("Username has already been used"), 400
     try:
         user = User(username=username, password = hashed)
