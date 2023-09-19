@@ -73,7 +73,7 @@ export default function Login() {
       {errors.password && touched.password && <p className="text-xs text-white">{errors.password}</p>}
       </div>
       <Button radius="lg" color="primary" variant="shadow" type="Submit">LOGIN</Button>
-      <Button radius="lg" color="primary" variant="shadow"><a href="Signup">NEED TO SIGN UP?</a></Button>
+      <a href="Signup"><Button radius="lg" color="primary" variant="shadow">NEED TO SIGN UP?</Button></a>
   </form>
   </div>
   </div>

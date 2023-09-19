@@ -35,7 +35,7 @@ const handleDelete = (e, post_id) => {
     method: "DELETE",
     credentials:"include",
   })
-  .catch("FAILED TO POST")
+  location.reload()
 }
 return (
 <>

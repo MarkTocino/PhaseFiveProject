@@ -74,7 +74,7 @@ console.log(errors)
       {errors.password && touched.password && <p className="text-xs text-white">{errors.password}</p>}
       </div>
       <Button radius="lg" color="primary" variant="shadow" type="Submit">SIGN ME UP!</Button>
-      <Button radius="lg" color="primary" variant="shadow"><a href="Login">BACK TO LOGIN</a></Button>
+      <a href="Login"><Button radius="lg" color="primary" variant="shadow">BACK TO LOGIN</Button></a>
   </form>
   </div>
   </div>

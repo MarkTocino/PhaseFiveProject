@@ -248,7 +248,7 @@ class Comment(Resource):
             post_comment = PostComment(comment=comment, user_id=current_user.id, post_id=post_id)
             db.session.add(post_comment)
             db.session.commit()
-            return "Comment has been posted"
+            return "Sucess", 200
         else:
             return "Comment has failed to post for this post"
 api.add_resource(Comment, '/Comment/<int:post_id>')
