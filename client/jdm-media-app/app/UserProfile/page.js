@@ -1,7 +1,6 @@
 'use client'
 import React, { useState, useEffect, useContext} from 'react'
 import { Staatliches } from 'next/font/google'
-import { UserContext } from '@/Context/UserProvider'
 const staatliches = Staatliches({
     weight:'400',
     subsets:['latin'],
@@ -32,7 +31,6 @@ useEffect(() => {
   .catch("This was an error fetch")
 },[]
 )
-console.log(images)
 const handleDelete = (e, post_id) => {
   fetch(`http://127.0.0.1:5555/DeletePost/${post_id}`,{
     method: "DELETE",

@@ -31,12 +31,13 @@ useEffect(() => {
 },[]
 )
 const [title, setTitle] = useState('')
+const [comment, setComment]= useState('')
 const [file ,setFile] = useState(null)
 const handlePost = (e) => {
   // NOTE TO SELF: FORMDATA() is used when Content or encType is multipart/form-data:
   const formData = new FormData();
   formData.append("photo", file);
-  formData.append("title", title)
+  formData.append("title", title);
   fetch("http://127.0.0.1:5555/UploadImage",{
     method: "POST",
     credentials:"include",
@@ -96,8 +97,12 @@ console.log(images)
             src={`data:image/jpeg;base64, ${image.photo}` || `data:image/png;base64. ${image.photo}`}
             alt='Images From Database'
           ></img>
-          <h2>Likes : {image.likes}
-          </h2>
+          <h2>Likes : {image.likes}</h2>
+            {image.post_comments.map((comments)=> (
+              <div key={comments.id}>
+              <h3>{image.username} : {comments.comment}</h3>
+              </div>
+            ))}
           <button onClick={(e) => handleLike(e, image.id)}>♥</button>
         </div>
       ))

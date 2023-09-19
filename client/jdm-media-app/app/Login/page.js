@@ -1,15 +1,18 @@
 'use client'
-import {useState} from "react"
 import { Button } from "@nextui-org/react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useFormik } from "formik";
+import * as yup from 'yup'
+import { Input } from "@nextui-org/react";
 
 export default function Login() {
-const [username, setUsername] = useState("");
-const [password, setPassword] = useState("");
-const router = useRouter()
-  const handleLogin = (e) => {
-    e.preventDefault();
+  const router = useRouter()
+  const basicSchema = yup.object().shape({
+    username: yup.string().required("Please Enter A Valid Username"),
+    password: yup.string()
+    .required("Please Enter A Valid Password")
+  })
+  const onSubmit = () => {
       fetch("http://127.0.0.1:5555/Login", {
         method: "POST",
         credentials: "include",
@@ -17,8 +20,8 @@ const router = useRouter()
           "Content-Type": "application/json; charset=UTF-8",
         },
         body: JSON.stringify({
-          username: username,
-          password: password,
+          username: values.username,
+          password: values.password,
         }),
       })
       .then(response => {
@@ -27,75 +30,50 @@ const router = useRouter()
         }
       })
     }
+// FORMIK
+    const { values, errors, handleBlur,touched, handleChange, handleSubmit } = useFormik({
+      initialValues: {
+        username:"",
+        password:""
+      },
+      validationSchema: basicSchema,
+      onSubmit,
+    })
   return (
-<>
-    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-    <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-      <img
-        className="mx-auto h-40 w-auto"
-        src="https://img.freepik.com/premium-vector/japanese-logo-with-word-japan-it_384468-2076.jpg?w=2000"
-        alt="Your Company"
+<div className="bg-cover bg-center bg-no-repeat bg-[url('../Images/Supra_Login.gif')]">
+<div className="flex h-screen w-auto flex-col text-center items-center justify-center">
+  <form autoComplete="off" onSubmit={handleSubmit}>
+    <div className="text-white text-4xl font-bold">JDM LOGIN</div>
+    <div className="m-2 w-60">
+      <Input
+      color="white"
+      value={values.username}
+      onChange={handleChange}
+      id="username"
+      type="username"
+      placeholder="Enter Your Username"
+      onBlur={handleBlur}
+      className={errors.username && touched.username ? "input-error" : ""}
+     />
+     {errors.username && touched.username && <p className="text-xs text-white">{errors.username}</p>}
+     </div>
+     <div className="m-2 w-60">
+      <Input 
+      className={errors.password && touched.password ? "input-error" : ""}
+      color="white"
+      value={values.password}
+      onChange={handleChange}
+      id="password"
+      type="password"
+      placeholder="Password"
+      onBlur={handleBlur}
       />
-      <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-        Sign in to your account
-      </h2>
-    </div>
-    <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-      <form onSubmit={handleLogin} className="space-y-6" action="#" method="POST">
-        <div>
-          <label htmlFor="username" className="block text-sm font-medium leading-6 text-gray-900">
-            Username
-          </label>
-          <div className="mt-2">
-            <input
-              id="username"
-              name="username"
-              type="username"
-              autoComplete="email"
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            />
-          </div>
-        </div>
-        <div>
-          <div className="flex items-center justify-between">
-            <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
-              Password
-            </label>
-            <div className="text-sm">
-              <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
-              </a>
-            </div>
-          </div>
-          <div className="mt-2">
-            <input
-              id="password"
-              name="password"
-              type="password"
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete="current-password"
-              required
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            />
-          </div>
-        </div>
-        <div>
-          <Button color="Black" variant="ghost"
-            type="submit"
-            className="flex w-full justify-center relative overflow-visible rounded-full hover:-translate-y-1 px-12 shadow-xl bg-background/30 after:content-[''] after:absolute after:rounded-full after:inset-0 after:bg-background/40 after:z-[-1] after:transition after:!duration-500 hover:after:scale-150 hover:after:opacity-0"          >
-            Sign in
-          </Button>
-        </div>
-      </form>
-      <p className="mt-10 text-center text-sm text-gray-500">
-        Don't have an account?{' '}
-        <Link href="Signup" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
-          Signup!
-        </Link>
-      </p>
-    </div>
+      {errors.password && touched.password && <p className="text-xs text-white">{errors.password}</p>}
+      </div>
+      <Button radius="lg" color="primary" variant="shadow" type="Submit">LOGIN</Button>
+      <Button radius="lg" color="primary" variant="shadow"><a href="Signup">NEED TO SIGN UP?</a></Button>
+  </form>
   </div>
-</>
+  </div>
   )
 }

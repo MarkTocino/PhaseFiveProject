@@ -1,4 +1,4 @@
-from models import db, User, Post , PostComment, user_likes
+from models import db, User, Post , PostComment, UserLikes
 from flask_restful import Api, Resource
 from flask import Flask, make_response, request
 from flask_migrate import Migrate
@@ -142,7 +142,7 @@ class UploadImage(Resource):
             title = request.form.get('title')
             filename = secure_filename(photo.name)
             mimetype = photo.mimetype
-            post = Post(title=title ,photo=photo.read(), mimetype=mimetype, name=filename, user_id=current_user.id)
+            post = Post(title=title,photo=photo.read(), mimetype=mimetype, name=filename, user_id=current_user.id)
             db.session.add(post)
             db.session.commit()
             return 'Image was uploaded', 200
@@ -199,6 +199,7 @@ class DeletePost(Resource):
 api.add_resource(DeletePost, '/DeletePost/<int:post_id>')
 # LIKES
 class Like(Resource):
+    @login_required
     def patch(self, post_id):
         data = request.get_json()
         postlike = data['likes']
@@ -217,6 +218,7 @@ class Like(Resource):
                 return make_response("User has already liked this post")
         if not post:
             return make_response("Post does not exists", 404)
+        # UNLIKE A CERTAIN POST ADDITIONAL
     def delete(self, post_id):
         data = request.get_json()
         postlike = data['likes']
@@ -232,6 +234,22 @@ class Like(Resource):
         if not post:
             return make_response("Post does not exists", 404)
 api.add_resource(Like, '/Like/<int:post_id>')
+
+class Comment(Resource):
+    @login_required
+    def post(self, post_id):
+        post = Post.query.get(post_id)
+        data = request.get_json()
+        comment = data['comment']
+        if post:
+            # post.comment_by.append(current_user)
+            post_comment = PostComment(comment=comment, user_id=current_user.id, post_id=post_id)
+            db.session.add(post_comment)
+            db.session.commit()
+            return "Comment has been posted"
+        else:
+            return "Comment has failed to post for this post"
+api.add_resource(Comment, '/Comment/<int:post_id>')
 
 if __name__ == "__main__":
     app.run(port=5555, debug = True )

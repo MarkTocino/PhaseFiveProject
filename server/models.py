@@ -12,11 +12,26 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 # Likes Many to Many Table
-user_likes = db.Table('user_likes',
-                 db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
-                 db.Column('post_id', db.Integer, db.ForeignKey('posts.id'))
-)
+# user_likes = db.Table('user_likes',
+#                  db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+#                  db.Column('post_id', db.Integer, db.ForeignKey('posts.id'))
+# )
 
+# Association Tables
+class PostComment(db.Model, UserMixin, SerializerMixin):
+    __tablename__ = 'post_comments'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+    comment = db.Column(db.String, nullable = True)
+
+class UserLikes(db.Model):
+    __tablename__ = 'user_likes'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+
+# My models that can Serialize that Mixin
 class User(db.Model, UserMixin, SerializerMixin):
     __tablename__= 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -28,10 +43,10 @@ class User(db.Model, UserMixin, SerializerMixin):
     # relationship
     posts = db.relationship('Post', cascade = 'all, delete', backref = 'user')
     post_comments = db.relationship('PostComment', cascade = 'all ,delete', backref = 'user')
-    liked_posts = db.relationship('Post', secondary=user_likes, back_populates='liked_by')
+    liked_posts = db.relationship('Post', secondary=UserLikes.__table__, back_populates='liked_by')
+    user_comments = db.relationship('Post', secondary=PostComment.__table__, back_populates='comment_by',)
     # rules
-    serialize_rules = ('-posts.user','-post_comments.user','-liked_posts',)
-
+    serialize_rules = ('-posts.user', '-post_comments', '-liked_posts', '-user_comments',)
 class Post(db.Model,UserMixin, SerializerMixin):
     __tablename__='posts'
     id = db.Column(db.Integer, primary_key=True)
@@ -45,18 +60,8 @@ class Post(db.Model,UserMixin, SerializerMixin):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     post_comments = db.relationship('PostComment', cascade = 'all, delete', backref = 'post')
 
-    liked_by = db.relationship('User', secondary=user_likes, back_populates='liked_posts')
+    liked_by = db.relationship('User', secondary=UserLikes.__table__, back_populates='liked_posts')
+    comment_by = db.relationship('User', secondary=PostComment.__table__, back_populates='user_comments',)
     # rules
-    serialize_rules = ('-post_comments.post','-liked_by',)
+    serialize_rules = ( '-post_comments.user', '-post_comments.post','-liked_by', '-comment_by',)
 
-
-class PostComment(db.Model, SerializerMixin):
-    __tablename__ = 'post_comments'
-    id = db.Column(db.Integer, primary_key=True)
-    comment = db.Column(db.String)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
-    serialize_rules = ('-user.post_comments', '-post.post_comments',)
-
-# class Admins(db.Model, SerializerMixin):
-#     pass
