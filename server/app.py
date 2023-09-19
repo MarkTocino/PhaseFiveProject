@@ -50,7 +50,9 @@ class Login(Resource):
         password = data['password']
         if bcrypt.checkpw(password.encode('utf-8'), user.password):
             login_user(user, remember=True)
-            return "You Are Logged In!", 200
+            return make_response("Logged in!", 200)
+        else:
+            return make_response("Wrong Password", 400)
 api.add_resource(Login, '/Login')
 
 class Logout(Resource):

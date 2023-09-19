@@ -12,7 +12,6 @@ const handlelogout = () => {
     method:"POST",
     credentials:"include",
   })
-  
 }
 const [images, setImage] = useState([]);
 useEffect(() => {

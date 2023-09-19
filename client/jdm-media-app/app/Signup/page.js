@@ -26,8 +26,11 @@ const basicSchema = yup.object().shape({
           password: values.password,
         }),
       })
-      .then((response) => response.json())
-        router.push("/Login");
+      .then((response) => {
+        if (response.ok) {
+          return router.push('/Login')
+        }
+      })
     }
 // Formik
 const { values, errors, handleBlur,touched, handleChange, handleSubmit } = useFormik({

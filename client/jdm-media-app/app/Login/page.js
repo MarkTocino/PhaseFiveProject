@@ -24,9 +24,11 @@ export default function Login() {
           password: values.password,
         }),
       })
-      .then(response => {
+      .then((response) => {
         if (response.ok) {
           router.push('/Dashboard')
+        } else {
+          return alert("You have entered the Wrong Username or Password, Please Try Again")
         }
       })
     }
