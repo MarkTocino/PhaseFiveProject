@@ -1,14 +1,19 @@
 'use client'
 import React, { useContext, useState, useEffect } from 'react'
 import { Staatliches } from 'next/font/google'
-import { Button, image, user } from '@nextui-org/react'
 import { UserContext } from '@/Context/UserProvider'
+import {Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle,NavbarMenu,NavbarMenuItem
+} from "@nextui-org/react";
+import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure} from "@nextui-org/react";
+import { Link } from '@nextui-org/react'
+import { Input } from '@nextui-org/react';
 const staatliches = Staatliches({
   weight:'400',
   subsets:['latin'],
   display: 'swap'
 })
 export const Dashboard = () => {
+const [isMenuOpen, setIsMenuOpen] = useState(false);
 const { user } = useContext(UserContext)
 const handlelogout = () => {
   fetch("http://127.0.0.1:5555/Logout",{
@@ -111,33 +116,63 @@ const handleLike = (e, post_id) => {
   })
   .catch("FAILED TO POST")
 }
-
+const {isOpen, onOpen, onOpenChange} = useDisclosure();
   return (
 <>
-<div className={staatliches.className}>
-  <header className='flex justify-between align-middle headerNav'>
-    <ul className='flex text-2xl'>JDM</ul>
-      <nav>
-        <ul className='Navbar'>
-          <li className='flex text-2xl'><a href='Dashboard'>Home</a></li>
-          <li className='flex text-2xl'><a href='UserProfile'>UserProfile</a></li>
-          <li className='flex text-2xl'><a href='AccountSettings'>Settings</a></li>
-        </ul>
-      </nav>
-      <button onClick={handlelogout} className='flex text-2xl'><a href='/'>LOGOUT</a></button>
-  </header>
-</div>
-<form onSubmit={handlePost}>
-  <label onChange={(e) => setTitle(e.target.value)}>TITLE: <input type='text'></input></label>
-    <input id="photo" onChange={(e) => setFile(e.target.files[0])} type='file'></input>
-    <button type='submit'>Submit</button>
-</form>
+<Navbar isBordered={true} shouldHideOnScroll={true} onMenuOpenChange={setIsMenuOpen} className='justify-start'>
+      <NavbarContent>
+        <NavbarMenuToggle
+          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+        />
+      </NavbarContent>
+      <NavbarBrand className='flex justify-center'/>Dashboard
+      <NavbarMenu>
+          <NavbarMenuItem>
+            <Link href='Dashboard'>
+            Dashboard
+            </Link>
+          </NavbarMenuItem>
+          <NavbarMenuItem>
+            <Link href='UserProfile'>
+            Posts
+            </Link>
+          </NavbarMenuItem>
+          <NavbarMenuItem>
+            <Link href='AccountSettings'>
+            UserProfile/Settings
+            </Link>
+          </NavbarMenuItem>
+          <NavbarMenuItem>
+          <Link onClick={handlelogout} href='/'>
+            Logout
+            </Link>
+          </NavbarMenuItem>
+      </NavbarMenu>
+    </Navbar>
+    <Button onPress={onOpen}>Make a Post!</Button>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+            <form onSubmit={handlePost}>
+              <br></br>
+              <label onChange={(e) => setTitle(e.target.value)}>What Would You Like To Say?<Input type='text'></Input></label>
+              <br></br>
+              <label><input id="photo" onChange={(e) => setFile(e.target.files[0])} type='file'></input></label>
+              <Button type='submit'>Submit Post</Button>
+            </form>
+                <Button color="primary" variant="light" onPress={onClose}>
+                  Close
+                </Button>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
 <div className='Container'>
     {images ?  (
       images.map((image) => (
         <div key={image.id}>
-          <h2>From : {image.username}</h2>
-          <h1>{image.title}</h1>
+          <h1>{image.username} : {image.title}</h1>
           <img
             src={`data:image/jpeg;base64, ${image.photo}` || `data:image/png;base64. ${image.photo}`}
             alt='Images From Database'
@@ -160,6 +195,7 @@ const handleLike = (e, post_id) => {
       <h1>IMAGE LOADING</h1>
     )}
 </div>
+
 </>
   )
 }

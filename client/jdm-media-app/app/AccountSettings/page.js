@@ -3,14 +3,18 @@ import React, { useState } from 'react'
 import { useContext } from 'react'
 import { UserContext } from '@/Context/UserProvider'
 import { Staatliches } from 'next/font/google'
+import { Link } from '@nextui-org/react'
 import 'reactjs-popup'
 import Popup from 'reactjs-popup'
+import {Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle,NavbarMenu,NavbarMenuItem
+} from "@nextui-org/react";
 const staatliches = Staatliches({
   weight:'400',
   subsets:['latin'],
   display: 'swap'
 })
 const AccountSettings = () => {
+const [isMenuOpen, setIsMenuOpen] = useState(false);
 const { user } = useContext(UserContext)
 const [new_username, setNew_username] = useState('')
 const [hashed, setNew_Password] = useState('')
@@ -89,18 +93,41 @@ const handlelogout = () => {
 }
 return (
 <>
+<div>
+
+<Navbar onMenuOpenChange={setIsMenuOpen} className='flex justify-start'>
+      <NavbarContent>
+        <NavbarMenuToggle
+          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+        />
+        <NavbarBrand className={staatliches.className}/>UserSettings
+      </NavbarContent>
+      <NavbarMenu>
+      
+          <NavbarMenuItem>
+            <Link href='Dashboard'>
+            Dashboard
+            </Link>
+          </NavbarMenuItem>
+          <NavbarMenuItem>
+            <Link href='UserProfile'>
+            Posts
+            </Link>
+          </NavbarMenuItem>
+          <NavbarMenuItem>
+            <Link href='AccountSettings'>
+            UserProfile/Settings
+            </Link>
+          </NavbarMenuItem>
+          <NavbarMenuItem>
+          <Link onClick={handlelogout} href='/'>
+            Logout
+            </Link>
+          </NavbarMenuItem>
+      </NavbarMenu>
+    </Navbar>
+</div>
 <div className={staatliches.className}>
-  <div className="flex justify-between align-middle headerNav">
-    <ul className='flex text-2xl'>JDM</ul>
-      <nav>
-        <ul className='Navbar'>
-          <li className='flex text-2xl'><a href='Dashboard'>Home</a></li>
-          <li className='flex text-2xl'><a href='UserProfile'>UserProfile</a></li>
-          <li className='flex text-2xl'><a href='AccountSettings'>Settings</a></li>
-        </ul>
-      </nav>
-      <button onClick={handlelogout} className='flex text-2xl'><a href='/'>LOGOUT</a></button>
-  </div>
 <div className='UserCover'>
     <div className='text-white text-4xl p-10'>Greetings {user?.username}, Here you can change your profile settings
       <br></br>
@@ -161,7 +188,7 @@ return (
     </div>
     </div>
   </div>
-</div>
+  </div>
 </>
   )
 }
