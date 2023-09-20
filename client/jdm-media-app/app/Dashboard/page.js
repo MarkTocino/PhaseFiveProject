@@ -3,7 +3,6 @@ import React, { useContext, useState, useEffect } from 'react'
 import { Staatliches } from 'next/font/google'
 import { Button, image, user } from '@nextui-org/react'
 import { UserContext } from '@/Context/UserProvider'
-import { useReducer } from 'react'
 const staatliches = Staatliches({
   weight:'400',
   subsets:['latin'],
@@ -29,6 +28,7 @@ useEffect(() => {
     post_likes:userPhoto.post_likes
     })))
     .sort((a,b) => b.id - a.id);
+    sortedMap.map(comment => comment.post_comments.sort((a,b) => b.id - a.id))
     setImage(sortedMap);
   })
   .catch("This was an error fetch")
@@ -59,6 +59,7 @@ const handleComment = (e, post_id) => {
     post_likes:userPhoto.post_likes
     })))
     .sort((a,b) => b.id - a.id);
+    sortedMap.map(comment => comment.post_comments.sort((a,b) => b.id - a.id))
     setImage(sortedMap);
   })
   .catch("This was an error fetch"))
@@ -87,6 +88,7 @@ const handlePost = (e) => {
     })))
     .sort((a,b) => b.id - a.id);
     setImage(sortedMap);
+    
   })
   .catch("This was an error fetch"))
 }
@@ -149,7 +151,7 @@ const handleLike = (e, post_id) => {
           </form>
             {image.post_comments.map((comments)=> (
               <div  key={comments.id}>
-              <h3 id="commentdiv" >{image.username} : {comments.comment}</h3>
+              <h3 id="commentdiv" >{comments.username} : {comments.comment}</h3>
               </div>
             ))}
         </div>

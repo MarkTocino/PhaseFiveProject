@@ -17,6 +17,7 @@ class PostComment(db.Model, UserMixin, SerializerMixin):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
     comment = db.Column(db.String, nullable = True)
+    username = db.Column(db.String, nullable=True)
 
 class UserLikes(db.Model):
     __tablename__ = 'user_likes'

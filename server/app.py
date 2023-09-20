@@ -172,9 +172,9 @@ class ImagePatch(Resource):
         try:
             setattr(post, 'title', new_title)
             db.session.commit()
-            return make_response("PATCH SUCCESFULL", 200)
+            return "PATCH SUCCESS"
         except:
-            return make_response("FAILED TO PATCH"), 400
+            return "PATCHED FAILED"
 api.add_resource(ImagePatch, '/ImagePatch/<int:post_id>')
 # USER DASHBOARD IMPORTANT
 class UserDashboard(Resource):
@@ -244,8 +244,7 @@ class Comment(Resource):
         data = request.get_json()
         comment = data['comment']
         if post:
-            # post.comment_by.append(current_user)
-            post_comment = PostComment(comment=comment, user_id=current_user.id, post_id=post_id)
+            post_comment = PostComment(username=current_user.username, comment=comment, user_id=current_user.id, post_id=post_id)
             db.session.add(post_comment)
             db.session.commit()
             return "Sucess", 200
