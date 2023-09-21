@@ -103,7 +103,6 @@ return (
         <NavbarBrand className={staatliches.className}/>UserSettings
       </NavbarContent>
       <NavbarMenu>
-      
           <NavbarMenuItem>
             <Link href='Dashboard'>
             Dashboard

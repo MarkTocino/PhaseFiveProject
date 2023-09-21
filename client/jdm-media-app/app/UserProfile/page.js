@@ -62,14 +62,13 @@ const [isMenuOpen, setIsMenuOpen] = useState(false);
 return (
 <>
 <div>
-<Navbar shouldHideOnScroll={true} onMenuOpenChange={setIsMenuOpen} className='flex justify-start'>
+<Navbar onMenuOpenChange={setIsMenuOpen} className='flex justify-start'>
       <NavbarContent>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
         />
       </NavbarContent>
       <NavbarBrand className={staatliches.className}/>Your Posts
-
       <NavbarMenu>
           <NavbarMenuItem>
             <Link href='Dashboard'>
@@ -95,21 +94,27 @@ return (
     </Navbar>
 </div>
 <div>
+  
+      <div className='Container bg-gradient bg-cyan-500'>
       <h1>Your Uploaded Posts! You Can Edit Your Posts Here!</h1>
         {images ?
             images.map((image) => (
               <div key={image.id}>
               <form onSubmit={(e) => handleEdit(e, image.id)}>
-                <label>{image.title}</label>
+                <label>Current Message: {image.title}</label>
+                <br></br>
+                <label>Change Message Here! : </label>
                 <input value={editedTitle} onChange={(e) => setEditedTitle(e.target.value)}/>
-                <Button type='submit'>Submit</Button>
+                <Button color='primary' type='submit'>Submit</Button>
               </form>
                 <img src={`data:image/jpeg;base64, ${image.photo}` || `data:image/png;base64. ${images}`} alt='Images From Database'></img>
-                <button onClick={(e) => handleDelete(e,image.id)}>DELETE POST</button>
+                <Button color='danger' onClick={(e) => handleDelete(e,image.id)}>DELETE POST</Button >
               </div>
+              
             ))
         : ( <h1>IMAGE LOADING</h1>
         )}
+      </div>
       </div>
 </>
   )
