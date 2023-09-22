@@ -95,7 +95,7 @@ return (
 </div>
 <div>
   
-      <div className='Container bg-gradient bg-cyan-500'>
+      <div className='Container'>
       <h1>Your Uploaded Posts! You Can Edit Your Posts Here!</h1>
         {images ?
             images.map((image) => (

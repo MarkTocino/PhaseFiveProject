@@ -150,7 +150,7 @@ const {isOpen, onOpen, onOpenChange} = useDisclosure();
           </NavbarMenuItem>
       </NavbarMenu>
     </Navbar>
-<div className='Container bg-gradient bg-cyan-500'>
+<div className='Container'>
     {images ?  (
       images.map((image) => (
         <div key={image.id}>
@@ -173,7 +173,7 @@ const {isOpen, onOpen, onOpenChange} = useDisclosure();
             <div className='min-h-fit max-h-44 overflow-y-scroll text-left'>
             {image.post_comments.map((comments)=> (
               <div key={comments.id} className='flex flex-wrap justify-start text-left max-w-md overflow-x-hidden w-48'>
-              {comments.username} : <p>{comments.comment}</p>
+              {comments.username} : {comments.comment}
               </div>
             ))}
             </div>
