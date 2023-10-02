@@ -127,17 +127,17 @@ return (
     </Navbar>
 </div>
 <div className={staatliches.className}>
-<div className='UserCover'>
-    <div className='text-white text-4xl p-10'>Greetings {user?.username}, Here you can change your profile settings
+<div className='Container'>
+    <div className='flex justify-center align-middle text-center flex-col text-black lg:text-4xl md:text-xl p-10'>Greetings {user?.username}, Here you can change your profile settings
       <br></br>
         What Would You Like To Change?
       <br></br>
-    <div className='p-10 space-x-60'>
-    <Popup position={'bottom center'}trigger={<button>UserName?</button>}>
-      <div className=' text-white text-2xl bg-auto bg-black rounded-lg border-black p-5'>
+    <div className='flex flex-row justify-evenly'>
+    <Popup position={'bottom left'}trigger={<button>UserName?</button>}>
+      <div className='flex flex-col text-white lg:text-2xl md:text-md bg-auto bg-black rounded-lg border-black p-3'>
         <form onSubmit={handleUsername} className={staatliches.className}>
-          <div className='p-2'>Current UserName: {user?.username}</div>
-          <label className='p-2'>New Username:</label>
+          <div className=''>Current UserName: {user?.username}</div>
+          <label className=''>New Username:</label>
           <br></br>
           <input onChange={(e) => setNew_username(e.target.value)} className='bg-black border-white p-2' id='id' type='text' name='username' placeholder='Input New Username'></input>
         <div className={staatliches.className}>
@@ -147,9 +147,9 @@ return (
       </div>
     </Popup>
     <Popup position={'bottom center'}trigger={<button>Password?</button>}>
-      <div className=' text-white text-2xl bg-auto bg-black rounded-lg border-black p-5'>
+      <div className='flex flex-col text-white lg:text-2xl md:text-md bg-auto bg-black rounded-lg border-black p-3'>
         <form onSubmit={handlePassword} className={staatliches.className}>
-          <label className='p-2'>New Password:</label>
+          <label className=''>New Password:</label>
           <br></br>
           <input id='id' onChange={(e) => setNew_Password(e.target.value)} className='bg-black border-white p-2' type='text' name='Password' placeholder='Input New Password'></input>
         <div className={staatliches.className}>
@@ -159,7 +159,7 @@ return (
       </div>
     </Popup>
     <Popup position={'bottom center'}trigger={<button>FIRSTNAME?</button>}>
-      <div className=' text-white text-2xl bg-auto bg-black rounded-lg border-black p-5'>
+      <div className='flex flex-col text-white lg:text-2xl md:text-md bg-auto bg-black rounded-lg border-black p-3'>
         <form onSubmit={handleFirstName} className={staatliches.className}>
           <div className='p-2'>Current FirstName: {user ? user?.first_name : 'None'}</div>
           <label className='p-2'>New FirstName:</label>
@@ -171,8 +171,8 @@ return (
         </form>
       </div>
     </Popup>
-    <Popup position={'bottom center'}trigger={<button>LASTNAME?</button>}>
-      <div className=' text-white text-2xl bg-auto bg-black rounded-lg border-black p-5'>
+    <Popup position={'bottom right'}trigger={<button>LASTNAME?</button>}>
+      <div className='flex flex-col text-white lg:text-2xl md:text-md bg-auto bg-black rounded-lg border-black p-3'>
         <form onSubmit={handleLastName} className={staatliches.className}>
           <div className='p-2'>Current Lastname: {user ? user.last_name : 'None'}</div>
           <label className='p-2'>NEW LAST NAME:</label>

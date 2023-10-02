@@ -30,13 +30,6 @@
   padding: 30px 10%;
   color: rgb(255, 255, 255);
 }
-.UserCover {
-  background-image: url('../Images/UserSettings_bg.jpg');
-  aspect-ratio: 16/7;
-  display: flex;
-  text-align: center;
-  justify-content: center;
-}
 .Container {
   display: flex;
   flex-direction: column;
