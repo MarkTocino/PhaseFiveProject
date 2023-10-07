@@ -60,15 +60,19 @@ const handleEdit = (e, post_id) => {
 }
 const [isMenuOpen, setIsMenuOpen] = useState(false);
 return (
-<>
-<div>
-<Navbar onMenuOpenChange={setIsMenuOpen} className='flex justify-start'>
+<div className={staatliches.className}>
+  <div className='flex justify-center gap-0 bg-sky-100'>
+<Navbar isBordered={true} shouldHideOnScroll={true} onMenuOpenChange={setIsMenuOpen} maxWidth='full'  >
       <NavbarContent>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
         />
       </NavbarContent>
-      <NavbarBrand className={staatliches.className}/>Your Posts
+      <NavbarContent justify='start' className='absolute m-unit-2xl'>
+        <div>
+        <NavbarBrand/>Users Posts
+        </div>
+      </NavbarContent>
       <NavbarMenu>
           <NavbarMenuItem>
             <Link href='Dashboard'>
@@ -94,29 +98,25 @@ return (
     </Navbar>
 </div>
 <div>
-  
-      <div className='Container'>
-      <h1>Your Uploaded Posts! You Can Edit Your Posts Here!</h1>
+    <div className='flex justify-center h-screen w-full flex-wrap text-center  bg-sky-100'>
         {images ?
             images.map((image) => (
               <div key={image.id}>
               <form onSubmit={(e) => handleEdit(e, image.id)}>
-                <label>Current Message: {image.title}</label>
-                <br></br>
-                <label>Change Message Here! : </label>
-                <input value={editedTitle} onChange={(e) => setEditedTitle(e.target.value)}/>
-                <Button color='primary' type='submit'>Submit</Button>
               </form>
-                <img src={`data:image/jpeg;base64, ${image.photo}` || `data:image/png;base64. ${images}`} alt='Images From Database'></img>
-                <Button color='danger' onClick={(e) => handleDelete(e,image.id)}>DELETE POST</Button >
+                <img className='h-auto w-96 px-3 hover:bg-black' src={`data:image/jpeg;base64, ${image.photo}` || `data:image/png;base64. ${images}`} alt='Images From Database'></img>
+                <div>{image.title}</div>
+                <Button className='h-8 red' onClick={(e) => handleDelete(e,image.id)}>DELETE POST</Button >
+                {/* <input value={editedTitle} onChange={(e) => setEditedTitle(e.target.value)}/> */}
+                {/* <Button color='primary' type='submit'>Submit</Button> */}
               </div>
               
-            ))
+              ))
         : ( <h1>IMAGE LOADING</h1>
         )}
       </div>
-      </div>
-</>
+    </div>
+</div>
   )
 }
 export default UserProfile

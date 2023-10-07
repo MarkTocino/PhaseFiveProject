@@ -90,17 +90,27 @@ const handlelogout = () => {
     method:"POST",
     credentials:"include",
   })
+  .then(() => {
+    console.log("Logout Succesful")
+  } 
+    )
+  .catch((err) => {
+    console.log(err)
+  })
 }
 return (
-<>
-<div>
-
-<Navbar onMenuOpenChange={setIsMenuOpen} className='flex justify-start'>
+<div className={staatliches.className}>
+  <div className='flex justify-center gap-0'>
+<Navbar isBordered={true} shouldHideOnScroll={true} onMenuOpenChange={setIsMenuOpen} maxWidth='full'  >
       <NavbarContent>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
         />
-        <NavbarBrand className={staatliches.className}/>UserSettings
+      </NavbarContent>
+      <NavbarContent justify='start' className='absolute m-unit-2xl'>
+        <div>
+        <NavbarBrand/>UserSettings
+        </div>
       </NavbarContent>
       <NavbarMenu>
           <NavbarMenuItem>
@@ -188,7 +198,7 @@ return (
     </div>
   </div>
   </div>
-</>
+</div>
   )
 }
 export default AccountSettings
